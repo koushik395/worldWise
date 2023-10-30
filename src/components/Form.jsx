@@ -13,6 +13,7 @@ import Spinner from "./Spinner";
 import { useCities } from "../contexts/CitiesContext";
 import Emoji from "./Emoji";
 import { useNavigate } from "react-router-dom";
+import { parseISO } from "date-fns";
 
 const BASE_URL = "https://api.bigdatacloud.net/data/reverse-geocode-client";
 
@@ -24,7 +25,7 @@ function Form() {
   const [isLoadingGeocoding, setIsLoadingGeocoding] = useState(false);
   const [cityName, setCityName] = useState("");
   const [country, setCountry] = useState("");
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState(new Date().toISOString());
   const [notes, setNotes] = useState("");
   const [emoji, setEmoji] = useState("");
   const [geocodingError, setGeocodingError] = useState("");
@@ -73,15 +74,14 @@ function Form() {
     if (!cityName || !date) return;
 
     const newCity = {
+      id: Math.floor(Math.random() * (100000 - 100 + 1)) + 100,
       cityName,
       country,
       emoji,
       date,
       notes,
-      position: {
-        lat,
-        lng,
-      },
+      positionLat: lat,
+      positionLng: lng,
     };
     await createCity(newCity);
     navigate("/app/cities");
@@ -112,7 +112,7 @@ function Form() {
         <DatePicker
           id="date"
           onChange={(date) => setDate(date)}
-          selected={date}
+          selected={parseISO(date)}
           dateFormat="dd/MM/yyyy"
         />
       </div>
